@@ -1,6 +1,6 @@
 {
     "name": "@sweetroll/vite-plugin-assethash",
-    "version": "1.0.1",
+    "version": "1.0.3",
     "description": "A Vite plugin to hash files from specified directories and add them to the Rollup manifest.",
     "main": "dist/index.js",
     "type": "module",
@@ -42,7 +42,7 @@
         "path": "^0.12.7"
     },
     "peerDependencies": {
-        "vite": "^6.0.1",
-        "typescript": "^5.7.2"
+        "vite": "^6",
+        "typescript": "^5"
     }
 }
