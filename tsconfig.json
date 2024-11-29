@@ -5,6 +5,7 @@
         "target": "ESNext", // Compiles to modern JavaScript
         "outDir": "./dist",
         "rootDir": "./src",
+        "declaration": true,
         "esModuleInterop": true,
         "strict": true,
         "resolveJsonModule": true,
