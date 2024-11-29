@@ -3,7 +3,7 @@ import generateFileMap from './generate-file-map';
 
 export default function assetHashPlugin({ inputs = [] }: { inputs: string[] }) {
     return {
-        name: 'vite-plugin-file-map',
+        name: 'vite-plugin-assethash',
         config: (userConfig: UserConfig) => {
             const fileMap = {};
 
