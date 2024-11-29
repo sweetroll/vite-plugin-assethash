@@ -1,6 +1,6 @@
 {
     "name": "@sweetroll/vite-plugin-assethash",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "description": "A Vite plugin to hash files from specified directories and add them to the Rollup manifest.",
     "main": "dist/index.js",
     "type": "module",
@@ -11,7 +11,7 @@
     "scripts": {
         "clean": "rimraf dist/",
         "compile": "tsc --project tsconfig.json",
-        "lint": "npm run compile && eslint --report-unused-disable-directives --max-warnings=0 *.ts *.mjs && prettier . --check",
+        "lint": "npm run compile && eslint --report-unused-disable-directives --max-warnings=0 src && prettier . --check",
         "prepack": "npm run clean && npm run compile"
     },
     "repository": {
@@ -28,7 +28,6 @@
         "url": "https://github.com/sweetroll/vite-plugin-assethash/issues"
     },
     "homepage": "https://github.com/sweetroll/vite-plugin-assethash#readme",
-    "packageManager": "pnpm@8.9.2+sha1.5f2fa48d614263457cf5d7fb7be8b878da318d87",
     "devDependencies": {
         "@eslint/js": "^9.15.0",
         "@types/node": "^22.10.1",
@@ -36,12 +35,14 @@
         "globals": "^15.12.0",
         "prettier": "^3.4.1",
         "rimraf": "^6.0.1",
-        "typescript": "^5.7.2",
         "typescript-eslint": "^8.16.0"
     },
     "dependencies": {
         "fs": "0.0.1-security",
-        "path": "^0.12.7",
-        "vite": "^6.0.1"
+        "path": "^0.12.7"
+    },
+    "peerDependencies": {
+        "vite": "^6.0.1",
+        "typescript": "^5.7.2"
     }
 }

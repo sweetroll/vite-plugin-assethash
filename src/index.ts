@@ -1,5 +1,5 @@
 import type { UserConfig } from 'vite';
-import generateFileMap from './generate-file-map';
+import generateFileMap from './generate-file-map.js';
 
 export default function assetHashPlugin({ inputs = [] }: { inputs: string[] }) {
     return {

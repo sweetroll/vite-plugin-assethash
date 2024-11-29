@@ -1,13 +1,15 @@
 {
     "compilerOptions": {
-        "target": "ESNext", // Use the latest JavaScript features
-        "module": "ESNext", // Use ES module system
-        "moduleResolution": "Node", // Resolve modules like Node.js
-        "declaration": true, // Generate .d.ts files for type definitions
-        "outDir": "dist", // Output compiled files to the "dist" directory
-        "strict": true, // Enable all strict type checking options
-        "esModuleInterop": true, // Allow default imports from CommonJS modules
-        "skipLibCheck": true // Skip type checking of declaration files
+        "module": "NodeNext", // Use Node's modern ESM system
+        "moduleResolution": "NodeNext", // Resolves imports using NodeNext strategy
+        "target": "ESNext", // Compiles to modern JavaScript
+        "outDir": "./dist",
+        "rootDir": "./src",
+        "esModuleInterop": true,
+        "strict": true,
+        "resolveJsonModule": true,
+        "skipLibCheck": true
     },
-    "include": ["*.ts"]
+    "include": ["src/**/*"],
+    "exclude": ["node_modules", "dist"]
 }
