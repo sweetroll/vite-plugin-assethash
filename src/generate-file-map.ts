@@ -1,25 +1,18 @@
-import fs from 'fs';
 import path from 'path';
 
-export default function generateFileMap(dir: string, prefix = '') {
+/**
+ * Generates a file map for resolved file paths.
+ * @param {string[]} filePaths - An array of file paths resolved by glob patterns.
+ * @param {string} prefix - An optional prefix for file keys.
+ * @returns {Record<string, string>} - A map of file keys to file paths.
+ */
+export default function generateFileMap(filePaths: string[], prefix = '') {
     const result = {} as Record<string, string>;
-    if (!fs.existsSync(dir)) {
-        console.warn(`Directory not found: ${dir}`);
-        return result;
-    }
 
-    const entries = fs.readdirSync(dir, { withFileTypes: true });
-
-    entries.forEach((entry) => {
-        const entryPath = path.join(dir, entry.name);
-
-        if (entry.isDirectory()) {
-            // Recursively handle subdirectories
-            Object.assign(result, generateFileMap(entryPath, `${prefix}${entry.name}/`));
-        } else {
-            const baseName = path.parse(entry.name).name;
-            result[`${prefix}${baseName}`] = entryPath;
-        }
+    filePaths.forEach((filePath) => {
+        const relativePath = path.relative(process.cwd(), filePath); // Normalize to relative path
+        const key = `${prefix}${relativePath}`; // Use full relative path as the key
+        result[key] = relativePath; // Add to the result map
     });
 
     return result;

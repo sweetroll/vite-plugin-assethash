@@ -1,71 +1,76 @@
-import { describe, it, expect, vi, afterEach } from 'vitest';
-import fs, { Dirent } from 'fs';
+import { describe, it, expect } from 'vitest';
+import path from 'path';
 import generateFileMap from '../src/generate-file-map.js';
 
-vi.mock('fs');
-
 describe('generateFileMap', () => {
-    afterEach(() => {
-        vi.restoreAllMocks();
-    });
-
-    it('should return an empty object if the directory does not exist', () => {
-        vi.spyOn(fs, 'existsSync').mockReturnValue(false);
-
-        const result = generateFileMap('non-existent-dir');
+    it('returns an empty object for an empty file path array', () => {
+        const result = generateFileMap([]);
         expect(result).toEqual({});
-        expect(fs.existsSync).toHaveBeenCalledWith('non-existent-dir');
     });
 
-    it('should return an empty object if the directory is empty', () => {
-        vi.spyOn(fs, 'existsSync').mockReturnValue(true);
-        vi.spyOn(fs, 'readdirSync').mockReturnValue([]);
+    it('maps a flat list of file paths correctly using full relative paths as keys', () => {
+        const filePaths = ['src/file1.txt', 'src/file2.txt'];
 
-        const result = generateFileMap('empty-dir');
-        expect(result).toEqual({});
-        expect(fs.readdirSync).toHaveBeenCalledWith('empty-dir', { withFileTypes: true });
-    });
-
-    it('should map files in a flat directory', () => {
-        vi.spyOn(fs, 'existsSync').mockReturnValue(true);
-        vi.spyOn(fs, 'readdirSync').mockReturnValue([
-            { name: 'file1.txt', isDirectory: () => false } as Dirent,
-            { name: 'file2.txt', isDirectory: () => false } as Dirent
-        ]);
-
-        const result = generateFileMap('flat-dir');
+        const result = generateFileMap(filePaths);
         expect(result).toEqual({
-            file1: 'flat-dir/file1.txt',
-            file2: 'flat-dir/file2.txt'
+            'src/file1.txt': 'src/file1.txt',
+            'src/file2.txt': 'src/file2.txt'
         });
     });
 
-    it('should handle nested directories', () => {
-        vi.spyOn(fs, 'existsSync').mockReturnValue(true);
-        vi.spyOn(fs, 'readdirSync').mockImplementation((dir) => {
-            if (dir === 'root')
-                return [
-                    { name: 'subdir', isDirectory: () => true } as Dirent,
-                    { name: 'file1.txt', isDirectory: () => false } as Dirent
-                ];
-            if (dir === 'root/subdir') return [{ name: 'file2.txt', isDirectory: () => false } as Dirent];
-            return [];
-        });
+    it('handles nested file paths correctly using full relative paths as keys', () => {
+        const filePaths = ['root/file1.txt', 'root/subdir/file2.txt'];
 
-        const result = generateFileMap('root');
+        const result = generateFileMap(filePaths);
         expect(result).toEqual({
-            file1: 'root/file1.txt',
-            'subdir/file2': 'root/subdir/file2.txt'
+            'root/file1.txt': 'root/file1.txt',
+            'root/subdir/file2.txt': 'root/subdir/file2.txt'
         });
     });
 
-    it('should apply prefix correctly', () => {
-        vi.spyOn(fs, 'existsSync').mockReturnValue(true);
-        vi.spyOn(fs, 'readdirSync').mockReturnValue([{ name: 'file1.txt', isDirectory: () => false } as Dirent]);
+    it('maps files with the same name but different extensions using full relative paths as keys', () => {
+        const filePaths = ['src/file1.txt', 'src/file1.png'];
 
-        const result = generateFileMap('some-dir', 'prefix/');
+        const result = generateFileMap(filePaths);
         expect(result).toEqual({
-            'prefix/file1': 'some-dir/file1.txt'
+            'src/file1.txt': 'src/file1.txt',
+            'src/file1.png': 'src/file1.png'
+        });
+    });
+
+    it('maps files with the same name but in different directories using full relative paths as keys', () => {
+        const filePaths = ['src/file1.txt', 'nested/file1.txt'];
+
+        const result = generateFileMap(filePaths);
+        expect(result).toEqual({
+            'src/file1.txt': 'src/file1.txt',
+            'nested/file1.txt': 'nested/file1.txt'
+        });
+    });
+
+    it('applies prefix correctly to full relative paths as keys', () => {
+        const filePaths = ['some-dir/file1.txt', 'another-dir/file2.txt'];
+
+        const result = generateFileMap(filePaths, 'prefix/');
+        expect(result).toEqual({
+            'prefix/some-dir/file1.txt': 'some-dir/file1.txt',
+            'prefix/another-dir/file2.txt': 'another-dir/file2.txt'
+        });
+    });
+
+    it('normalizes file paths to relative paths', () => {
+        const absolutePaths = [path.resolve('src/file1.txt'), path.resolve('nested/file2.txt')];
+
+        const result = generateFileMap(absolutePaths);
+        expect(result).toEqual({
+            [path.relative(process.cwd(), path.resolve('src/file1.txt'))]: path.relative(
+                process.cwd(),
+                path.resolve('src/file1.txt')
+            ),
+            [path.relative(process.cwd(), path.resolve('nested/file2.txt'))]: path.relative(
+                process.cwd(),
+                path.resolve('nested/file2.txt')
+            )
         });
     });
 });
