@@ -25,7 +25,7 @@ export default defineConfig({
     plugins: [
         // ...
         assetHash({
-            inputs: ['./your/asset/directories', './go/here']
+            inputs: ['./your/assets/**/*', './go/here/*.{jpg,png}']
         })
     ]
 });
