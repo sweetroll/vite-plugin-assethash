@@ -8,17 +8,16 @@ export default function generateFileMap(dir: string, prefix = '') {
         return result;
     }
 
-    const entries = fs.readdirSync(dir);
+    const entries = fs.readdirSync(dir, { withFileTypes: true });
 
     entries.forEach((entry) => {
-        const entryPath = path.join(dir, entry);
-        const stats = fs.statSync(entryPath);
+        const entryPath = path.join(dir, entry.name);
 
-        if (stats.isDirectory()) {
+        if (entry.isDirectory()) {
             // Recursively handle subdirectories
-            Object.assign(result, generateFileMap(entryPath, `${prefix}${entry}/`));
+            Object.assign(result, generateFileMap(entryPath, `${prefix}${entry.name}/`));
         } else {
-            const baseName = path.parse(entry).name;
+            const baseName = path.parse(entry.name).name;
             result[`${prefix}${baseName}`] = entryPath;
         }
     });
